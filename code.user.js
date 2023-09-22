@@ -37,7 +37,6 @@
     const PAGE_MARKET_LISTING = 1;
     const PAGE_TRADEOFFER = 2;
     const PAGE_INVENTORY = 3;
-
     const COLOR_ERROR = '#8A4243';
     const COLOR_SUCCESS = '#407736';
     const COLOR_PENDING = '#908F44';
@@ -1129,6 +1128,21 @@
         }
 
         var sellQueue = async.queue(function(task, next) {
+
+                if (market.getPriceIncludingFees(task.sellPrice) > 1000&& market.getPriceIncludingFees(task.sellPrice) < 2000) {
+                    task.sellPrice -= 3;
+                } else if (market.getPriceIncludingFees(task.sellPrice) >= 2000&& market.getPriceIncludingFees(task.sellPrice) < 7000) {
+                    task.sellPrice -= 7;
+                } else if (market.getPriceIncludingFees(task.sellPrice) >= 7000&& market.getPriceIncludingFees(task.sellPrice) < 12000) {
+                    task.sellPrice -= 14;
+                } else if (market.getPriceIncludingFees(task.sellPrice) >= 12000&& market.getPriceIncludingFees(task.sellPrice) < 20000) {
+                    task.sellPrice -= 21;
+                } else if (market.getPriceIncludingFees(task.sellPrice) >= 20000&& market.getPriceIncludingFees(task.sellPrice) < 30000) {
+                    task.sellPrice -= 28;
+                } else if (market.getPriceIncludingFees(task.sellPrice) >= 30000) {
+                    task.sellPrice -= 35;
+                }
+
                 market.sellItem(task.item,
                     task.sellPrice,
                     function(err, data) {
