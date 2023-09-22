@@ -743,7 +743,7 @@
 
             if (cache) {
                 var storage_hash = 'itemordershistogram_' + appid + '+' + market_name;
-                storagePersistent.getItem(storage_hash)
+                storageSession.getItem(storage_hash)
                     .then(function(value) {
                         if (tempItemOrdersHistogram[storage_hash] != null) {
                             console.log('读取物品'+market_name+'itemordershistogram')
@@ -790,7 +790,7 @@
                         function(histogram) {
                             // Store the histogram in the session storage.
                             var storage_hash = 'itemordershistogram_' + item.appid + '+' + market_name;
-                            storagePersistent.setItem(storage_hash, histogram);
+                            storageSession.setItem(storage_hash, histogram);
 
                             tempItemOrdersHistogram[storage_hash]=histogram;
 
