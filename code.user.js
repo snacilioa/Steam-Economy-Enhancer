@@ -746,11 +746,11 @@
                 storageSession.getItem(storage_hash)
                     .then(function(value) {
                         if (tempItemOrdersHistogram[storage_hash] != null) {
-                            console.log('读取物品'+market_name+'itemordershistogram')
+                            // console.log('读取物品'+market_name+'itemordershistogram')
                             callback(ERROR_SUCCESS, tempItemOrdersHistogram[storage_hash], true);
                         }
                         else {
-                            console.log('查询物品'+market_name+'itemordershistogram')
+                            // console.log('查询物品'+market_name+'itemordershistogram')
                             market.getCurrentItemOrdersHistogram(item, market_name, callback);
                         }
                     })
