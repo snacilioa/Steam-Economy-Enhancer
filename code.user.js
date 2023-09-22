@@ -730,6 +730,7 @@
     //"price_prefix" : "",
     //"price_suffix" : "\u20ac"
     //}
+    let tempItemOrdersHistogram={};
     SteamMarket.prototype.getItemOrdersHistogram = function(item, cache, callback) {
         try {
             var market_name = getMarketHashName(item);
@@ -742,11 +743,14 @@
 
             if (cache) {
                 var storage_hash = 'itemordershistogram_' + appid + '+' + market_name;
-                storageSession.getItem(storage_hash)
+                storagePersistent.getItem(storage_hash)
                     .then(function(value) {
-                        if (value != null)
-                            callback(ERROR_SUCCESS, value, true);
+                        if (tempItemOrdersHistogram[storage_hash] != null) {
+                            console.log('读取物品'+market_name+'itemordershistogram')
+                            callback(ERROR_SUCCESS, tempItemOrdersHistogram[storage_hash], true);
+                        }
                         else {
+                            console.log('查询物品'+market_name+'itemordershistogram')
                             market.getCurrentItemOrdersHistogram(item, market_name, callback);
                         }
                     })
@@ -786,7 +790,9 @@
                         function(histogram) {
                             // Store the histogram in the session storage.
                             var storage_hash = 'itemordershistogram_' + item.appid + '+' + market_name;
-                            storageSession.setItem(storage_hash, histogram);
+                            storagePersistent.setItem(storage_hash, histogram);
+
+                            tempItemOrdersHistogram[storage_hash]=histogram;
 
                             callback(ERROR_SUCCESS, histogram, false);
                         })
