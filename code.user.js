@@ -2189,7 +2189,7 @@
                 $('.sell_all_cards').on('click', '*', sellAllCards);
                 $('.sell_all_crates').on('click', '*', sellAllCrates);
                 $('.turn_into_gems').on('click', '*', turnSelectedItemsIntoGems);
-                $('.unpack_booster_packs').on('click', '*', unpackSelectedBoosterPacks);
+                    $('.unpack_booster_packs').on('click', '*', unpackSelectedBoosterPacks);
 
             }
 
@@ -2394,7 +2394,7 @@
                         setTimeout(function() {
                                 next();
                             },
-                            cached ? 0 : getRandomInt(1000, 1500));
+                            cached ? 0 : getRandomInt(300, 400));
                     } else {
                         setTimeout(function() {
                                 marketListingsQueueWorker(listing,
