@@ -1,30 +1,48 @@
 // ==UserScript==
-// @name         è‡ªåŠ¨é˜Ÿåˆ—æ»¡è¶³è‡ªå®šä¹‰æ—¥ç›ˆåˆ©å’Œæœˆäº¤æ˜“é‡çš„æ¸¸æˆ
+// @name         ×Ô¶¯¶ÓÁĞÂú×ã×Ô¶¨ÒåÈÕÓ¯ÀûºÍÔÂ½»Ò×Á¿µÄÓÎÏ·
 // @version      1.0
-// @description  è‡ªåŠ¨é˜Ÿåˆ—æ»¡è¶³è‡ªå®šä¹‰æ—¥ç›ˆåˆ©å’Œæœˆäº¤æ˜“é‡çš„æ¸¸æˆ
-// @author       ç¬¬ä¸‰å¼‚æ˜Ÿ
+// @description  ×Ô¶¯¶ÓÁĞÂú×ã×Ô¶¨ÒåÈÕÓ¯ÀûºÍÔÂ½»Ò×Á¿µÄÓÎÏ·
+// @author       µÚÈıÒìĞÇ
 // @match        https://steamcommunity.com//tradingcards/boostercreator/
-// @match        https://steamcommunity.com/tradingcards/boostercreator/
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=steamcommunity.com
+// @require     https://code.jquery.com/jquery-3.3.1.min.js
 // @grant        GM_xmlhttpRequest
 // @grant        GM_getValue
 // @grant        GM_setValue
 // ==/UserScript==
 
-(function() {
-    'use strict';
-    //æ§åˆ¶å°å¼€å¯æ­£åˆ™è¡¨è¾¾å¼æŸ¥è¯¢'æ— éœ€|å˜ä¸º'ä¸¤ä¸ªå…³é”®è¯çš„æ€»å’Œä¸ºæ¸¸æˆæ€»æ•°ï¼Œå¦‚æœå°‘äºæ¸¸æˆæ€»æ•°ï¼Œé‚£å°±æ˜¯æœ‰æ¸¸æˆæŸ¥è¯¢å¤±è´¥ï¼ŒæŸ¥è¯¢'æ— æ³•'å¯çŸ¥é“å“ªäº›æ¸¸æˆæŸ¥è¯¢å¤±è´¥
-    //ç†è®ºé—ªå¡ä»·æ ¼Â¥ï¼Œè®¾ç½®ä¸º999999è¯´æ˜è¯¥é—ªå¡ä»·æ ¼ç¨³å®šä¸å˜ï¼ŒæŸ¥è¯¢åˆ°çš„é—ªå¡ä»·æ ¼å¯ä»¥ç›´æ¥ä½¿ç”¨
-    //ç¬¬ä¸€æ¬¡ä½¿ç”¨ï¼Œéœ€è¦f12æ‰“å¼€æ§åˆ¶å°ï¼Œå¤åˆ¶ignoreå¯¹è±¡å¯¼å…¥ä½ æœ‰çš„æ¸¸æˆï¼Œåç»­ä¹°å…¥æ–°æ¸¸æˆï¼Œæ‰‹åŠ¨ä¸€ä¸ªä¸ªæ·»åŠ ç†æƒ³é—ªå¡ä»·æ ¼
-    let SelectGameToCraftBoosterPacks='booster Bot2 ';
-    let idealprice= {
-        "730": 8,
-
-    };//è¯¥è¡Œ-19ä¸ºæ¸¸æˆä¸ªæ•°
-    let alwayscraftbooster={
-        // "1469910":true,
-        "1901370":true,
-
+(function ($) {
+    $.noConflict(true);
+    //¿ØÖÆÌ¨¿ªÆôÕıÔò±í´ïÊ½²éÑ¯'ÎŞĞè|±äÎª'Á½¸ö¹Ø¼ü´ÊµÄ×ÜºÍÎªÓÎÏ·×ÜÊı£¬Èç¹ûÉÙÓÚÓÎÏ·×ÜÊı£¬ÄÇ¾ÍÊÇÓĞÓÎÏ·²éÑ¯Ê§°Ü£¬²éÑ¯'ÎŞ·¨'¿ÉÖªµÀÄÄĞ©ÓÎÏ·²éÑ¯Ê§°Ü
+    //ÀíÂÛÉÁ¿¨¼Û¸ñ?£¬ÉèÖÃÎª999999ËµÃ÷¸ÃÉÁ¿¨¼Û¸ñÎÈ¶¨²»±ä£¬²éÑ¯µ½µÄÉÁ¿¨¼Û¸ñ¿ÉÒÔÖ±½ÓÊ¹ÓÃ
+    //µÚÒ»´ÎÊ¹ÓÃ£¬ĞèÒªf12´ò¿ª¿ØÖÆÌ¨£¬¸´ÖÆignore¶ÔÏóµ¼ÈëÄãÓĞµÄÓÎÏ·£¬ºóĞøÂòÈëĞÂÓÎÏ·£¬ÊÖ¶¯Ò»¸ö¸öÌí¼ÓÀíÏëÉÁ¿¨¼Û¸ñ
+    let SelectGameToCraftBoosterPacks = '';
+    let alwaysCraftBoosterPacks = {
+        1901370: true,
+    }
+    let idealprice = {}
+    //ÓÀ¾ÃÀ­ºÚÃûµ¥
+    let blacklist = {
+        "730": true,
+        "4000": true,
+        "252610": true,
+        "292030": true,
+        "327410": true,
+        "337340": true,
+        "417990": true,
+        "424840": true,
+        "431960": true,
+        "434650": true,
+        "489520": true,
+        "503300": true,
+        "508190": true,
+        "575550": true,
+        "531960": true,
+        "635730": true,
+        "599460": true,
+        "644560": true,
+        "646570": true,
+        "712840": true,
     }
     const boosterCostTemplate = {
         5: {
@@ -62,145 +80,183 @@
         },
     }
 
+    async function getMarketItemNameId(url) {
+        let page = await $.get(url);
+        let matches = /Market_LoadOrderSpread\( (.+) \);/.exec(page);
+        let item_nameid = matches[1];
+        return item_nameid;
+    }
+
+    async function getCurrentItemOrdersHistogram(itemid) {
+        let url = window.location.protocol + '//steamcommunity.com/market/itemordershistogram?country=CN&language=english&currency=23&item_nameid=' + itemid + '&two_factor=0';
+        let histogram = await $.get(url);
+        let price = histogram.sell_order_graph[0][0];
+        return price;
+    }
+
     let container = document.createElement('div');
     container.style.position = 'fixed';
     container.style.top = '10px';
     container.style.right = '10px';
 
     let button = document.createElement("button");
-    button.innerHTML = "è‡ªåŠ¨é˜Ÿåˆ—ç¬¦åˆè¦æ±‚çš„æ¸¸æˆ";
+    button.innerHTML = "×Ô¶¯¶ÓÁĞ·ûºÏÒªÇóµÄÓÎÏ·";
 
     const displayElement1 = document.createElement('div');
     displayElement1.style.background = 'white';
     displayElement1.style.border = '1px solid black';
     displayElement1.style.minHeight = '20px';
-    displayElement1.style.color='black';
-    displayElement1.textContent='å®çŸ³è¢‹æˆæœ¬';
+    displayElement1.style.color = 'black';
+    displayElement1.textContent = '±¦Ê¯´ü³É±¾';
     displayElement1.style.display = 'inline-block';
 
     let inputBox1 = document.createElement('input');
     inputBox1.style.background = 'green';
-    inputBox1.style.color='white';
+    inputBox1.style.color = 'white';
     inputBox1.style.display = 'inline-block';
 
-    const displayElement2 = document.createElement('div');
-    displayElement2.style.background = 'white';
-    displayElement2.style.border = '1px solid black';
-    displayElement2.style.minHeight = '20px';
-    displayElement2.style.color='black';
-    displayElement2.textContent='æ—¥ç›ˆåˆ©å¤§äºç­‰äº';
-    displayElement2.style.display = 'inline-block';
+    let checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.id = 'modenormal-checkbox';
 
-    let inputBox2 = document.createElement('input');
-    inputBox2.style.background = 'green';
-    inputBox2.style.color='white';
-    inputBox2.style.display = 'inline-block';
-
-    const displayElement3 = document.createElement('div');
-    displayElement3.style.background = 'white';
-    displayElement3.style.border = '1px solid black';
-    displayElement3.style.minHeight = '20px';
-    displayElement3.style.color='black';
-    displayElement3.textContent='æœˆé”€é‡å¤§äºç­‰äº';
-    displayElement3.style.display = 'inline-block';
-
-    let inputBox3 = document.createElement('input');
-    inputBox3.style.background = 'green';
-    inputBox3.style.color='white';
-    inputBox3.style.display = 'inline-block';
+    let label = document.createElement('label');
+    label.style.background = 'white';
+    label.style.color = 'black';
+    label.htmlFor = 'modenormal-checkbox';
+    label.appendChild(document.createTextNode('ÊĞ³¡¼Û¸ñÊÇ·ñÒì³£'));
 
     const displayElement4 = document.createElement('div');
     displayElement4.style.background = 'white';
     displayElement4.style.border = '1px solid black';
     displayElement4.style.minHeight = '20px';
-    displayElement4.style.color='orange';
+    displayElement4.style.color = 'orange';
     displayElement4.style.display = 'block';
 
     let row1 = document.createElement('div');
     row1.appendChild(displayElement1);
     row1.appendChild(inputBox1);
 
-    let row2 = document.createElement('div');
-    row2.appendChild(displayElement2);
-    row2.appendChild(inputBox2);
+    let row4 = document.createElement('div');
+    row4.appendChild(label);
+    row4.appendChild(checkbox);
 
-    let row3 = document.createElement('div');
-    row3.appendChild(displayElement3);
-    row3.appendChild(inputBox3);
+    let button2 = document.createElement('button');
+    button2.innerHTML = 'µã»÷°´Å¥³õÊ¼»¯²éÑ¯ÓÎÏ·ĞòºÅ';
+    button2.style.display = 'inline-bloc';
+    button2.style.background = 'white';
+    button2.style.border = '2px solid black';
+    button2.style.borderRadius = '5px';
+    button2.style.color = 'black';
+
+    let button21 = document.createElement('button');
+    button21.innerHTML = 'µã»÷°´Å¥ÖÕÖ¹²éÑ¯ÓÎÏ·';
+    button21.style.display = 'inline-bloc';
+    button21.style.background = 'white';
+    button21.style.border = '2px solid black';
+    button21.style.borderRadius = '5px';
+    button21.style.color = 'black';
+
+    let row5 = document.createElement('div');
+    row5.appendChild(button2);
+    row5.appendChild(button21);
+
+    let displayElement0 = document.createElement('div');
+    displayElement0.style.background = 'white';
+    displayElement0.style.border = '1px solid black';
+    displayElement0.style.minHeight = '20px';
+    displayElement0.style.color = 'black';
+    displayElement0.style.background = 'white';
+    displayElement0.textContent = 'ÊäÈë´ÓµÚ¼¸¸öÓÎÏ·¿ªÊ¼ÕÒÆğ(Ä¬ÈÏÎª0)';
+    displayElement0.style.display = 'inline-block';
+
+    let inputBox = document.createElement('input');
+    inputBox.style.background = 'green';
+    inputBox.style.display = 'inline-block';
+
+    let row6 = document.createElement('div');
+    row6.appendChild(displayElement0);
+    row6.appendChild(inputBox);
+
+    let i = 0;
+    inputBox.addEventListener('change', function () {
+        i = inputBox.value || 0;
+    });
+
+    button2.addEventListener('click', function () {
+        i = 0;
+        console.log('³õÊ¼»¯²éÑ¯ÓÎÏ·ĞòºÅ');
+    })
+
+    button21.addEventListener('click', function () {
+        i = 999999;
+        console.log('ÖÕÖ¹²éÑ¯ÓÎÏ·');
+    })
 
     container.appendChild(button);
     container.appendChild(row1);
-    container.appendChild(row2);
-    container.appendChild(row3);
+    container.appendChild(row4);
+    container.appendChild(row5);
+    container.appendChild(row6);
     container.appendChild(displayElement4);
     document.body.appendChild(container);
-    //æ€»æ—¥ç›ˆåˆ©
-    let totalprofit=0,totalgame=0,totalgem=0;
-    //å®çŸ³è¢‹ä»·æ ¼
+    let totalprofit = 0, totalgame = 0, totalgem = 0;
+    //±¦Ê¯´ü¼Û¸ñ
     let savedPrice = GM_getValue('price', '');
     if (savedPrice) {
         inputBox1.value = savedPrice;
     }
-    //ä¿å­˜å®çŸ³è¢‹ä»·æ ¼
-    inputBox1.addEventListener('change', function() {
+    //±£´æ±¦Ê¯´ü¼Û¸ñ
+    inputBox1.addEventListener('change', function () {
         GM_setValue('price', this.value);
     });
-    //æ—¥ç›ˆåˆ©é™åˆ¶
-    let profitlimit = GM_getValue('profitlimit', '');
-    if (profitlimit) {
-        inputBox2.value = profitlimit;
-    }
-    //ä¿å­˜æ—¥ç›ˆåˆ©é™åˆ¶
-    inputBox2.addEventListener('change', function() {
-        GM_setValue('profitlimit', this.value);
+    // »ñÈ¡ÉÏÒ»´ÎµÄmodenormal×´Ì¬
+    let modenormal = localStorage.getItem('modenormal') === 'false' ? false : true;
+    checkbox.checked = !modenormal;
+    // ¼àÌıµ¥Ñ¡¿ò×´Ì¬±ä»¯
+    checkbox.addEventListener('change', function () {
+        modenormal = !checkbox.checked;
+        localStorage.setItem('modenormal', modenormal);
+        console.log('modenormal:', modenormal);
     });
-    //æœˆé”€é‡é™åˆ¶
-    let totalSaleslimit = GM_getValue('totalSaleslimit', '');
-    if (totalSaleslimit) {
-        inputBox3.value = totalSaleslimit;
-    }
-    //ä¿å­˜æœˆé”€é‡é™åˆ¶
-    inputBox3.addEventListener('change', function() {
-        GM_setValue('totalSaleslimit', this.value);
-    });
-    //è¾“å‡º
-    let gemsCountAll = GM_getValue('gemsCountAll', '');
-    if (gemsCountAll) {
-        displayElement4.value = gemsCountAll;
-    }
-    //ä¿å­˜è¾“å‡º
-    displayElement4.addEventListener('change', function() {
-        GM_setValue('gemsCountAll', this.value);
-    });
-    let i=0,delaytime=1000;
-    // æ·»åŠ æŒ‰é’®ç‚¹å‡»äº‹ä»¶
-    button.addEventListener("click", function() {
-        // åˆå§‹åŒ–ignoreå¯¹è±¡
+    let delaytime = 1000, allmes = [];
+    let checkedgame = {};
+    // Ìí¼Ó°´Å¥µã»÷ÊÂ¼ş
+    button.addEventListener("click", function () {
+        // ³õÊ¼»¯ignore¶ÔÏó
         let ignore = {};
-        // è·å–æ‰€æœ‰æŒ‰é’®
+        // »ñÈ¡ËùÓĞ°´Å¥
         let buttons = document.querySelectorAll("button");
-        // éå†æ‰€æœ‰æŒ‰é’®
+        // ±éÀúËùÓĞ°´Å¥
         for (let i = 0; i < buttons.length; i++) {
             let button = buttons[i];
             let id = button.id;
-            // æ£€æŸ¥idæ˜¯å¦åŒ…å«"+reset"
+            // ¼ì²éidÊÇ·ñ°üº¬"+reset"
             if (id.includes("+reset")) {
-                // æå–æ•°å­—éƒ¨åˆ†
+                // ÌáÈ¡Êı×Ö²¿·Ö
                 let number = id.split("+")[0];
-                // å°†æ•°å­—å­˜å‚¨åˆ°ignoreå¯¹è±¡ä¸­
+                // ½«Êı×Ö´æ´¢µ½ignore¶ÔÏóÖĞ
                 ignore[number] = true;
             }
         }
         console.log(ignore);
-        // åˆ›å»ºä¸€ä¸ªæ•°ç»„æ¥å­˜å‚¨ignoreä¸­çš„æ•°å­—éƒ¨åˆ†
+        // ´´½¨Ò»¸öÊı×éÀ´´æ´¢ignoreÖĞµÄÊı×Ö²¿·Ö
         let extractedNumber = [];
-        // éå†ignoreæ•°æ®å¹¶å°†æ•°å­—éƒ¨åˆ†å­˜å…¥extractedNumberæ•°ç»„ä¸­
+        // ±éÀúignoreÊı¾İ²¢½«Êı×Ö²¿·Ö´æÈëextractedNumberÊı×éÖĞ
         for (let key in ignore) {
             if (ignore.hasOwnProperty(key)) {
                 extractedNumber.push(key);
             }
         }
+
         function processArrayWithDelay() {
+            //¢Ù+outToBoosterÈ«²¿ÒÆµ½¶ÓÁĞ
+            //¢Ú+boosterToOut¶ÓÁĞÒÆµ½È«²¿
+            //¢Û+collectToOutÊÕ²ØÒÆµ½È«²¿
+            //¢Ü+outToCollectÈ«²¿ÒÆµ½ÊÕ²Ø
+            //¢İ+outToBlackÈ«²¿ÒÆµ½À­ºÚ
+            //¢Ş+blackToOutÀ­ºÚÒÆµ½È«²¿
+            //¢ß+collectToBoosterÊÕ²ØÒÆµ½¶ÓÁĞ
+            //¢à+boosterToCollect¶ÓÁĞÒÆµ½ÊÕ²Ø
             let buttonId1 = extractedNumber[i] + "+outToBooster";
             let buttonId2 = extractedNumber[i] + "+boosterToOut";
             let buttonId3 = extractedNumber[i] + "+collectToOut";
@@ -209,167 +265,195 @@
             let buttonId6 = extractedNumber[i] + "+blackToOut";
             let buttonId7 = extractedNumber[i] + "+collectToBooster";
             let buttonId8 = extractedNumber[i] + "+boosterToCollect";
-            //æ‹‰é»‘çŠ¶æ€ä¸å†æŸ¥è¯¢
-            if(document.getElementById(buttonId6)!=null){
-                console.log('ç›®å‰ä¸ºç¬¬'+(i+1)+'ä¸ªæ¸¸æˆï¼Œ'+extractedNumber[i]+'appæ‹‰é»‘çŠ¶æ€ï¼ŒæŸ¥è¯¢ä¸‹ä¸€ä¸ªæ¸¸æˆ');
-                i++;
-                setTimeout(processArrayWithDelay, 0);
-                return;
-            }
-            /*             //é¾™å§¬2242710 1901370
-            if(extractedNumber[i] == 1469910 || extractedNumber[i] == 2242710 || extractedNumber[i] == 1901370){
-                console.log('ç›®å‰ä¸ºç¬¬'+(i+1)+'ä¸ªæ¸¸æˆ,æŸ¥è¯¢ä¸ºé¾™å§¬/æƒ³è¦ä¼ è¾¾ç»™ä½ çš„çˆ±æ‹ï¼Œè·³è¿‡'+extractedNumber[i]);
-                i++;
-                setTimeout(processArrayWithDelay, 0);
-                return;
-            } */
-            /*             if(alwayscraftbooster[extractedNumber[i]]){
-                console.log('ç›®å‰ä¸ºç¬¬'+(i+1)+'ä¸ªæ¸¸æˆ,'+extractedNumber[i]+'ä¸ºæ— æ¡ä»¶åˆæˆè¡¥å……åŒ…æ¸¸æˆï¼Œé˜Ÿåˆ—å®ŒæŸ¥è¯¢ä¸‹ä¸€ä¸ªæ¸¸æˆ');
-                if(document.getElementById(buttonId2)!=null){
-                    console.log(extractedNumber[i]+'appé˜Ÿåˆ—çŠ¶æ€ï¼Œæ— éœ€å˜åŒ–');
-                }else if(document.getElementById(buttonId3)!=null){
-                    console.log(extractedNumber[i]+'appæ”¶è—çŠ¶æ€ï¼Œå˜ä¸ºé˜Ÿåˆ—çŠ¶æ€');
-                    let button = document.getElementById(buttonId7);
-                    button.click();
-                }else if(document.getElementById(buttonId5)!=null){
-                    console.log(extractedNumber[i]+'appå…¨éƒ¨çŠ¶æ€ï¼Œå˜ä¸ºé˜Ÿåˆ—çŠ¶æ€');
-                    let button = document.getElementById(buttonId1);
+            //À­ºÚ×´Ì¬²»ÔÙ²éÑ¯
+            if (blacklist[extractedNumber[i]]) {
+                console.log('Ä¿Ç°ÎªµÚ' + i + '¸öÓÎÏ·£¬' + extractedNumber[i] + 'appÓÀ¾ÃÀ­ºÚ×´Ì¬£¬²éÑ¯ÏÂÒ»¸öÓÎÏ·');
+                let button = document.getElementById(buttonId5);
+                if (button) {
                     button.click();
                 }
                 i++;
                 setTimeout(processArrayWithDelay, 0);
                 return;
-            } */
+            }
             if (i >= extractedNumber.length) {
-                console.log('æŸ¥è¯¢ç»“æŸ');
-                SelectGameToCraftBoosterPacks=SelectGameToCraftBoosterPacks.slice(0,SelectGameToCraftBoosterPacks.length-1);
-                console.log('bstopall Bot2');
-                console.log('\''+SelectGameToCraftBoosterPacks+'\'');
+                console.log('²éÑ¯½áÊø,¶ÓÁĞ½á¹ûÈçÏÂ');
+                console.log(allmes);
+                console.log('bstopall Bot2')
+                console.log('bstatus Bot2')
+                console.log('\'booster Bot2 ' + SelectGameToCraftBoosterPacks + '\'');
+                console.log(SelectGameToCraftBoosterPacks);
                 return;
             }
-            //æŸ¥è¯¢ä¸€ä¸ªå¡åŒ…ä»·æ ¼åŠåˆ©æ¶¦
-            let newURL='https://steamcommunity.com/market/search/render/?start=0&count=100&category_753_cardborder[]=tag_cardborder_0&appid=753&category_753_Game[]=tag_app_749520'.replace('749520', extractedNumber[i]);
+            //²éÑ¯Ò»¸ö¿¨°ü¼Û¸ñ¼°ÀûÈó
+            let newURL = 'https://steamcommunity.com/market/search/render/?start=0&count=100&category_753_cardborder[]=tag_cardborder_0&appid=753&category_753_Game[]=tag_app_749520'.replace('749520', extractedNumber[i]);
             GM_xmlhttpRequest({
                 method: "GET",
                 url: newURL,
-                onload: async function(response) {
+                onload: async function (response) {
                     let data = JSON.parse(response.response);
-                    // åˆå§‹åŒ–æ€»ä»·å’Œå¡ç‰Œæ•°é‡
+                    // ³õÊ¼»¯×Ü¼ÛºÍ¿¨ÅÆÊıÁ¿
                     let cardCount = data.total_count;
                     let totalPrice = 0;
                     if (!cardCount) {
-                        console.log(extractedNumber[i]+'æ— æ³•æŸ¥è¯¢åˆ°æ™®é€šå¡ç‰Œçš„ä¿¡æ¯ï¼Œé‡æ–°æŸ¥è¯¢è¯¥æ¸¸æˆ');
+                        console.log(extractedNumber[i] + 'ÎŞ·¨²éÑ¯µ½ÆÕÍ¨¿¨ÅÆµÄĞÅÏ¢£¬ÖØĞÂ²éÑ¯¸ÃÓÎÏ·');
                         setTimeout(processArrayWithDelay, delaytime);
                         return;
                     }
                     let cardList = document.createElement('div');
                     cardList.innerHTML = data.results_html;
-                    //è·å–æ‰€æœ‰å¡ç‰Œé“¾æ¥åœ°å€
+                    //»ñÈ¡ËùÓĞ¿¨ÅÆÁ´½ÓµØÖ·
                     let links = cardList.querySelectorAll('.market_listing_row_link');
-                    //è·å–ç¬¬ä¸€å¼ å¡ç‰Œé“¾æ¥åœ°å€
+                    //»ñÈ¡µÚÒ»ÕÅ¿¨ÅÆÁ´½ÓµØÖ·
                     let link1 = links[0].href;
-                    console.log('ç›®å‰ä¸ºç¬¬'+(i+1)+'ä¸ªæ¸¸æˆï¼Œç¬¬ä¸€å¼ æ™®é€šå¡ç‰Œé“¾æ¥:'+link1);
-                    let elements = cardList.querySelectorAll('.market_table_value.normal_price .normal_price');
-                    elements.forEach(function(priceElement) {
-                        // è·å–å¡ç‰Œä»·æ ¼æ–‡æœ¬
-                        let priceText = priceElement.textContent.replace('Â¥ ','').replace(',','').trim();
-                        // å°†ä»·æ ¼æ–‡æœ¬è½¬æ¢ä¸ºæµ®ç‚¹æ•°
-                        let price = parseFloat(priceText);
-                        // ç´¯åŠ æ€»ä»·
-                        totalPrice += price;
-                    });
-                    if(totalPrice==0){
-                        console.log(extractedNumber[i]+'æŸ¥è¯¢åˆ°æ™®é€šå¡ç‰Œä»·æ ¼ä¸º0ï¼Œé‡æ–°æŸ¥è¯¢è¯¥æ¸¸æˆ');
+                    console.log('Ä¿Ç°ÎªµÚ' + i + '¸öÓÎÏ·£¬µÚÒ»ÕÅÆÕÍ¨¿¨ÅÆÁ´½Ó:' + link1);
+                    let expence = 0, onecardexpence = 0, profitcardcount = 0;
+                    if (modenormal) {
+                        let elements = cardList.querySelectorAll('.market_table_value.normal_price .normal_price');
+                        //²¹³ä°ü³É±¾
+                        expence = boosterCostTemplate[cardCount].gemsCount / 1000 * savedPrice;
+                        onecardexpence = expence / 3;
+                        elements.forEach(function (priceElement) {
+                            // »ñÈ¡¿¨ÅÆ¼Û¸ñÎÄ±¾
+                            let priceText = priceElement.textContent;
+                            // ½«¼Û¸ñÎÄ±¾×ª»»Îª¸¡µãÊı
+                            let price = parseFloat(priceText.replace(/[^\d.]/g, ""));
+                            if (price >= onecardexpence) {
+                                profitcardcount++;
+                            }
+                            // ÀÛ¼Ó×Ü¼Û
+                            totalPrice += price;
+                        });
+                    } else {
+                        //²¹³ä°ü³É±¾
+                        expence = boosterCostTemplate[cardCount].gemsCount / 1000 * 2;
+                        onecardexpence = expence / 3;
+                        for (const item of links) {
+                            let itemid = await getMarketItemNameId(item.href);
+                            let price = await getCurrentItemOrdersHistogram(itemid);
+                            console.log(extractedNumber[i] + '¿¨ÅÆ¼Û¸ñ:' + price);
+                            while (!price) {
+                                console.log(extractedNumber[i] + '²éÑ¯²»µ½¼Û¸ñĞÅÏ¢,Á´½ÓÎª:' + item.href);
+                                price = await getCurrentItemOrdersHistogram(itemid);
+                            }
+                            if (price >= onecardexpence) {
+                                profitcardcount++;
+                            }
+                            // ÀÛ¼Ó×Ü¼Û
+                            totalPrice += price;
+                        }
+                    }
+                    let profitcardpercent = profitcardcount / cardCount * 100;
+                    if (totalPrice == 0) {
+                        console.log(extractedNumber[i] + '²éÑ¯µ½ÆÕÍ¨¿¨ÅÆ¼Û¸ñÎª0£¬ÖØĞÂ²éÑ¯¸ÃÓÎÏ·');
                         setTimeout(processArrayWithDelay, delaytime);
                         return;
                     }
-                    // è®¡ç®—ç¨åå¹³å‡ä»·æ ¼ï¼Œå’Œç¨åå¡åŒ…ä»·æ ¼
-                    const averagePrice = totalPrice / cardCount*0.87;
-                    const finalPrice=averagePrice*3;
-                    //è¡¥å……åŒ…æˆæœ¬
-                    let expence=boosterCostTemplate[cardCount].gemsCount/1000*savedPrice;
-                    //æŸ¥è¯¢é—ªäº®å¾½ç« ä»·æ ¼
-                    newURL='https://steamcommunity.com/market/search/render/?start=0&count=100&category_753_cardborder[]=tag_cardborder_1&appid=753&category_753_Game[]=tag_app_749520'.replace('749520', extractedNumber[i]);
+                    // ¼ÆËãË°ºóÆ½¾ù¼Û¸ñ£¬ºÍË°ºó¿¨°ü¼Û¸ñ
+                    const averagePrice = totalPrice / cardCount * 0.87;
+                    const finalPrice = averagePrice * 3;
+                    //²éÑ¯ÉÁÁÁ»ÕÕÂ¼Û¸ñ
+                    newURL = 'https://steamcommunity.com/market/search/render/?start=0&count=100&category_753_cardborder[]=tag_cardborder_1&appid=753&category_753_Game[]=tag_app_749520'.replace('749520', extractedNumber[i]);
                     GM_xmlhttpRequest({
                         method: "GET",
                         url: newURL,
-                        onload: async function(response) {
+                        onload: async function (response) {
                             let data = JSON.parse(response.response);
-                            // åˆå§‹åŒ–æ€»ä»·å’Œå¡ç‰Œæ•°é‡
+                            // ³õÊ¼»¯×Ü¼ÛºÍ¿¨ÅÆÊıÁ¿
                             let totalPrice = 0;
                             if (!cardCount) {
-                                console.log(extractedNumber[i]+'æ— æ³•æŸ¥è¯¢åˆ°é—ªäº®å¡ç‰Œçš„ä¿¡æ¯ï¼Œé‡æ–°æŸ¥è¯¢è¯¥æ¸¸æˆ');
+                                console.log(extractedNumber[i] + 'ÎŞ·¨²éÑ¯µ½ÉÁÁÁ¿¨ÅÆµÄĞÅÏ¢£¬ÖØĞÂ²éÑ¯¸ÃÓÎÏ·');
                                 setTimeout(processArrayWithDelay, delaytime);
                                 return;
                             }
                             let cardList = document.createElement('div');
                             cardList.innerHTML = data.results_html;
                             let elements = cardList.querySelectorAll('.market_table_value.normal_price .normal_price');
-                            let withoutcardcount=0;
-                            elements.forEach(function(priceElement) {
-                                // è·å–å¡ç‰Œä»·æ ¼æ–‡æœ¬
+                            let withoutcardcount = 0;
+                            elements.forEach(function (priceElement) {
+                                // »ñÈ¡¿¨ÅÆ¼Û¸ñÎÄ±¾
                                 let priceText = priceElement.textContent;
-                                // å°†ä»·æ ¼æ–‡æœ¬è½¬æ¢ä¸ºæµ®ç‚¹æ•°
+                                // ½«¼Û¸ñÎÄ±¾×ª»»Îª¸¡µãÊı
                                 let price = parseFloat(priceText.replace(/[^\d.]/g, ""));
-                                if(price==0){
+                                if (price == 0) {
                                     withoutcardcount++;
                                 }
-                                // ç´¯åŠ æ€»ä»·
+                                // ÀÛ¼Ó×Ü¼Û
                                 totalPrice += price;
                             });
-                            let hascardcount=elements.length-withoutcardcount;
-                            let toaddprice=totalPrice/hascardcount*2*withoutcardcount;
-                            totalPrice+=toaddprice;
-                            if(totalPrice==0){
-                                console.log(extractedNumber[i]+'æŸ¥è¯¢åˆ°é—ªäº®å¡ç‰Œä»·æ ¼ä¸º0ï¼Œé‡æ–°æŸ¥è¯¢è¯¥æ¸¸æˆ');
+                            let hascardcount = elements.length - withoutcardcount;
+                            let toaddprice = totalPrice / hascardcount * 2 * withoutcardcount;
+                            totalPrice += toaddprice;
+                            if (totalPrice == 0) {
+                                console.log(extractedNumber[i] + '²éÑ¯µ½ÉÁÁÁ¿¨ÅÆ¼Û¸ñÎª0£¬ÖØĞÂ²éÑ¯¸ÃÓÎÏ·');
                                 setTimeout(processArrayWithDelay, delaytime);
                                 return;
                             }
-                            console.log(extractedNumber[i]+'æŸ¥è¯¢åˆ°çš„é—ªå¡ä»·æ ¼'+totalPrice);
-                            //ç†è®ºé—ªå¡ä»·æ ¼å°šæœªç¡®å®šï¼Œç›´æ¥å°†ç†è®ºé—ªå¡ä»·æ ¼è®¾ç½®ä¸º999999ï¼Œåç»­æ‰‹åŠ¨æ·»åŠ è¯¥æ¸¸æˆç†è®ºé—ªå¡çš„ä»·æ ¼
+                            console.log(extractedNumber[i] + '²éÑ¯µ½µÄÉÁ¿¨¼Û¸ñ' + totalPrice);
+                            //ÀíÂÛÉÁ¿¨¼Û¸ñÉĞÎ´È·¶¨£¬Ö±½Ó½«ÀíÂÛÉÁ¿¨¼Û¸ñÉèÖÃÎª999999£¬ºóĞøÊÖ¶¯Ìí¼Ó¸ÃÓÎÏ·ÀíÂÛÉÁ¿¨µÄ¼Û¸ñ
                             if (idealprice[extractedNumber[i]] == undefined) idealprice[extractedNumber[i]] = 999999;
-                            //å¦‚æœç†è®ºé—ªå¡ä»·æ ¼<=æŸ¥è¯¢åˆ°çš„é—ªå¡ä»·æ ¼ï¼Œé€‰æ‹©ç†è®ºé—ªå¡ä»·æ ¼
-                            if(idealprice[extractedNumber[i]]<=totalPrice){
-                                totalPrice=idealprice[extractedNumber[i]];
+                            //Èç¹ûÀíÂÛÉÁ¿¨¼Û¸ñ<=²éÑ¯µ½µÄÉÁ¿¨¼Û¸ñ£¬Ñ¡ÔñÀíÂÛÉÁ¿¨¼Û¸ñ
+                            if (idealprice[extractedNumber[i]] <= totalPrice) {
+                                totalPrice = idealprice[extractedNumber[i]];
                             }
-                            console.log(extractedNumber[i]+'ç†è®ºé—ªå¡ä»·æ ¼'+idealprice[extractedNumber[i]]);
-                            //è®¡ç®—åˆ©æ¶¦ï¼ŒæŒ‰æ¯å››åä¸ªå¡åŒ…å¼€å‡ºé—ªå¡ä»¥75æŠ˜å‡ºå”®é—ªå¡ç„¶åæ‰£é™¤äº¤æ˜“ç¨13%
-                            const profit=finalPrice-expence+(totalPrice/cardCount*0.65)/40;
-                            console.log(extractedNumber[i]+'æ—¥ç›ˆåˆ©:'+profit);
-                            if (isNaN(profit)) {
-                                console.log('ç¬¬' + i + 'æ¬¡æŸ¥è¯¢çš„æ¸¸æˆ' + extractedNumber[i] + 'æ—¥ç›ˆåˆ©ä¸ºNaNï¼Œé‡æ–°æŸ¥è¯¢è¯¥æ¸¸æˆ');
-                                setTimeout(processArrayWithDelay, delaytime);
-                                return;
-                            }
-                            console.log(extractedNumber[i]+'æ—¥ç›ˆåˆ©:'+profit);
-                            //â‘ +outToBoosterå…¨éƒ¨ç§»åˆ°é˜Ÿåˆ—
-                            //â‘¡+boosterToOuté˜Ÿåˆ—ç§»åˆ°å…¨éƒ¨
-                            //â‘¢+collectToOutæ”¶è—ç§»åˆ°å…¨éƒ¨
-                            //â‘£+outToCollectå…¨éƒ¨ç§»åˆ°æ”¶è—
-                            //â‘¤+outToBlackå…¨éƒ¨ç§»åˆ°æ‹‰é»‘
-                            //â‘¥+blackToOutæ‹‰é»‘ç§»åˆ°å…¨éƒ¨
-                            //â‘¦+collectToBoosteræ”¶è—ç§»åˆ°é˜Ÿåˆ—
-                            //â‘§+boosterToCollecté˜Ÿåˆ—ç§»åˆ°æ”¶è—
-                            //æ—¥ç›ˆåˆ©å°äº0.3ï¼Œå˜ä¸ºæ”¶è—çŠ¶æ€ï¼Œæ”¶è—çŠ¶æ€å’Œæ‹‰é»‘çŠ¶æ€æ— éœ€å˜åŒ–
-                            if(profit<profitlimit&&!alwayscraftbooster[extractedNumber[i]]){
-                                if(document.getElementById(buttonId2)!=null){
-                                    console.log(extractedNumber[i]+'appé˜Ÿåˆ—çŠ¶æ€ï¼Œæ—¥ç›ˆåˆ©å°äº'+profitlimit+'ï¼Œå˜ä¸ºæ”¶è—çŠ¶æ€');
+                            console.log(extractedNumber[i] + 'ÀíÂÛÉÁ¿¨¼Û¸ñ' + idealprice[extractedNumber[i]]);
+                            if (!alwaysCraftBoosterPacks[extractedNumber[i]] && (totalPrice < 100 && profitcardpercent < 35)) {
+                                console.log('ÆÕÍ¨¿¨ÅÆÓ¯ÀûÊıÁ¿°Ù·Ö±È:' + profitcardpercent);
+                                if (document.getElementById(buttonId2) != null) {
+                                    console.log(extractedNumber[i] + 'app¶ÓÁĞ×´Ì¬£¬ÉÁ¿¨×Ü¼ÛĞ¡ÓÚ100£¬ÆÕÍ¨¿¨ÅÆÓ¯ÀûÊıÁ¿°Ù·Ö±ÈĞ¡ÓÚ35%£¬±äÎªÊÕ²Ø×´Ì¬');
                                     let button = document.getElementById(buttonId8);
                                     button.click();
-                                }else if(document.getElementById(buttonId3)!=null){
-                                    console.log(extractedNumber[i]+'appæ”¶è—çŠ¶æ€ï¼Œæ—¥ç›ˆåˆ©å°äº'+profitlimit+'ï¼Œæ— éœ€å˜åŒ–');
-                                }else if(document.getElementById(buttonId5)!=null){
-                                    console.log(extractedNumber[i]+'appå…¨éƒ¨çŠ¶æ€ï¼Œæ—¥ç›ˆåˆ©å°äº'+profitlimit+'ï¼Œå˜ä¸ºæ”¶è—çŠ¶æ€');
+                                } else if (document.getElementById(buttonId3) != null) {
+                                    console.log(extractedNumber[i] + 'appÊÕ²Ø×´Ì¬£¬ÉÁ¿¨×Ü¼ÛĞ¡ÓÚ100£¬ÆÕÍ¨¿¨ÅÆÓ¯ÀûÊıÁ¿°Ù·Ö±ÈĞ¡ÓÚ35%£¬ÎŞĞè±ä»¯');
+                                } else if (document.getElementById(buttonId5) != null) {
+                                    console.log(extractedNumber[i] + 'appÈ«²¿×´Ì¬£¬ÉÁ¿¨×Ü¼ÛĞ¡ÓÚ100£¬ÆÕÍ¨¿¨ÅÆÓ¯ÀûÊıÁ¿°Ù·Ö±ÈĞ¡ÓÚ35%£¬±äÎªÊÕ²Ø×´Ì¬');
                                     let button = document.getElementById(buttonId4);
                                     button.click();
+                                } else if (document.getElementById(buttonId6) != null) {
+                                    console.log(extractedNumber[i] + 'appÀ­ºÚ×´Ì¬£¬ÉÁ¿¨×Ü¼ÛĞ¡ÓÚ100£¬ÆÕÍ¨¿¨ÅÆÓ¯ÀûÊıÁ¿°Ù·Ö±ÈĞ¡ÓÚ35%£¬ÎŞĞè±ä»¯');
                                 }
-                                /*                                 else if(document.getElementById(buttonId6)!=null){
-                                    console.log(extractedNumber[i]+'appæ‹‰é»‘çŠ¶æ€ï¼Œæ—¥ç›ˆåˆ©å°äº'+profitlimit+'ï¼Œæ— éœ€å˜åŒ–');
-                                } */
                                 i++;
                                 setTimeout(processArrayWithDelay, delaytime);
-                            }else{
-                                //æŸ¥è¯¢è¯¥æ¸¸æˆç¬¬ä¸€å¼ æ™®é€šå¡ç‰Œè¿‘ä¸€ä¸ªæœˆå†…çš„é”€é‡
+                                return;
+                            }
+                            //¼ÆËãÀûÈó£¬°´Ã¿ËÄÊ®¸ö¿¨°ü¿ª³öÉÁ¿¨ÒÔ75ÕÛ³öÊÛÉÁ¿¨È»ºó¿Û³ı½»Ò×Ë°13%
+                            let profit = finalPrice - expence + (totalPrice / cardCount * 0.65) / 40;
+                            if (profit >= 6) {
+                                profit = 6;
+                            }
+                            console.log(extractedNumber[i] + 'ÈÕÓ¯Àû:' + profit);
+                            if (isNaN(profit)) {
+                                console.log('µÚ' + i + '´Î²éÑ¯µÄÓÎÏ·' + extractedNumber[i] + 'ÈÕÓ¯ÀûÎªNaN£¬ÖØĞÂ²éÑ¯¸ÃÓÎÏ·');
+                                setTimeout(processArrayWithDelay, delaytime);
+                                return;
+                            }
+                            //¢Ù+outToBoosterÈ«²¿ÒÆµ½¶ÓÁĞ
+                            //¢Ú+boosterToOut¶ÓÁĞÒÆµ½È«²¿
+                            //¢Û+collectToOutÊÕ²ØÒÆµ½È«²¿
+                            //¢Ü+outToCollectÈ«²¿ÒÆµ½ÊÕ²Ø
+                            //¢İ+outToBlackÈ«²¿ÒÆµ½À­ºÚ
+                            //¢Ş+blackToOutÀ­ºÚÒÆµ½È«²¿
+                            //¢ß+collectToBoosterÊÕ²ØÒÆµ½¶ÓÁĞ
+                            //¢à+boosterToCollect¶ÓÁĞÒÆµ½ÊÕ²Ø
+                            //ÈÕÓ¯ÀûĞ¡ÓÚ0.1£¬±äÎªÊÕ²Ø×´Ì¬£¬ÊÕ²Ø×´Ì¬ºÍÀ­ºÚ×´Ì¬ÎŞĞè±ä»¯
+                            if (!alwaysCraftBoosterPacks[extractedNumber[i]] && profit < 0.1) {
+                                if (document.getElementById(buttonId2) != null) {
+                                    console.log(extractedNumber[i] + 'app¶ÓÁĞ×´Ì¬£¬ÈÕÓ¯ÀûĞ¡ÓÚ0.1£¬±äÎªÊÕ²Ø×´Ì¬');
+                                    let button = document.getElementById(buttonId8);
+                                    button.click();
+                                } else if (document.getElementById(buttonId3) != null) {
+                                    console.log(extractedNumber[i] + 'appÊÕ²Ø×´Ì¬£¬ÈÕÓ¯ÀûĞ¡ÓÚ0.1£¬ÎŞĞè±ä»¯');
+                                } else if (document.getElementById(buttonId5) != null) {
+                                    console.log(extractedNumber[i] + 'appÈ«²¿×´Ì¬£¬ÈÕÓ¯ÀûĞ¡ÓÚ0.1£¬±äÎªÊÕ²Ø×´Ì¬');
+                                    let button = document.getElementById(buttonId4);
+                                    button.click();
+                                } else if (document.getElementById(buttonId6) != null) {
+                                    console.log(extractedNumber[i] + 'appÀ­ºÚ×´Ì¬£¬ÈÕÓ¯ÀûĞ¡ÓÚ0.1£¬ÎŞĞè±ä»¯');
+                                }
+                                i++;
+                                setTimeout(processArrayWithDelay, delaytime);
+                            } else {
+                                //²éÑ¯¸ÃÓÎÏ·µÚÒ»ÕÅÆÕÍ¨¿¨ÅÆ½üÒ»¸öÔÂÄÚµÄÏúÁ¿
                                 let match = link1.match(/\/753\/(.+)$/);
                                 let market_hash_name;
                                 if (match) {
@@ -379,22 +463,22 @@
                                 GM_xmlhttpRequest({
                                     method: "GET",
                                     url: saleurl,
-                                    onload: function(response) {
+                                    onload: function (response) {
                                         let data = JSON.parse(response.responseText);
                                         if (!data) {
-                                            console.log(extractedNumber[i]+'æ— æ³•æŸ¥è¯¢åˆ°ç¬¬ä¸€å¼ æ™®é€šå¡ç‰Œçš„äº¤æ˜“è®°å½•ï¼Œé‡æ–°æŸ¥è¯¢è¯¥æ¸¸æˆ');
+                                            console.log(extractedNumber[i] + 'ÎŞ·¨»ñÈ¡µÚÒ»ÕÅÆÕÍ¨¿¨ÅÆµÄĞÅÏ¢£¬ÖØĞÂ²éÑ¯¸ÃÓÎÏ·');
                                             setTimeout(processArrayWithDelay, delaytime);
                                             return;
                                         }
-                                        if(!data.prices){
-                                            console.log(extractedNumber[i]+'æ— æ³•è·å–åˆ°ç¬¬ä¸€å¼ æ™®é€šå¡ç‰Œçš„äº¤æ˜“è®°å½•ï¼Œé‡æ–°æŸ¥è¯¢è¯¥æ¸¸æˆ');
+                                        if (!data.prices) {
+                                            console.log(extractedNumber[i] + 'ÎŞ·¨»ñÈ¡µ½µÚÒ»ÕÅÆÕÍ¨¿¨ÅÆµÄ½»Ò×¼ÇÂ¼£¬ÖØĞÂ²éÑ¯¸ÃÓÎÏ·');
                                             setTimeout(processArrayWithDelay, delaytime);
                                             return;
                                         }
                                         let prices = data.prices;
                                         let currentDate = new Date();
                                         let totalSales = 0;
-                                        //ç´¯åŠ è¿‘30å¤©å†…å–å‡ºçš„å¡ç‰Œæ•°é‡
+                                        //ÀÛ¼Ó½ü30ÌìÄÚÂô³öµÄ¿¨ÅÆÊıÁ¿
                                         for (let i = prices.length - 1; i >= 0; i--) {
                                             let dateStr = prices[i][0];
                                             let date = new Date(dateStr);
@@ -406,73 +490,59 @@
                                                 break;
                                             }
                                         }
-                                        console.log(extractedNumber[i]+'æœˆé”€é‡ä¸º'+totalSales);
-                                        //æ­¤å¤„æ‰€æœ‰æ¸¸æˆæ—¥ç›ˆåˆ©éƒ½å¤§äºç­‰äº0.3ï¼Œæœˆé”€é‡å¤§äºç­‰äº50ï¼Œå˜ä¸ºé˜Ÿåˆ—çŠ¶æ€ï¼Œå¦åˆ™å˜ä¸ºæ”¶è—çŠ¶æ€ï¼Œæœˆé”€é‡å°äº50ï¼Œå˜ä¸ºæ‹‰é»‘çŠ¶æ€
-                                        //â‘ +outToBoosterå…¨éƒ¨ç§»åˆ°é˜Ÿåˆ—
-                                        //â‘¡+boosterToOuté˜Ÿåˆ—ç§»åˆ°å…¨éƒ¨
-                                        //â‘¢+collectToOutæ”¶è—ç§»åˆ°å…¨éƒ¨
-                                        //â‘£+outToCollectå…¨éƒ¨ç§»åˆ°æ”¶è—
-                                        //â‘¤+outToBlackå…¨éƒ¨ç§»åˆ°æ‹‰é»‘
-                                        //â‘¥+blackToOutæ‹‰é»‘ç§»åˆ°å…¨éƒ¨
-                                        //â‘¦+collectToBoosteræ”¶è—ç§»åˆ°é˜Ÿåˆ—
-                                        //â‘§+boosterToCollecté˜Ÿåˆ—ç§»åˆ°æ”¶è—
-                                        if(totalSales>=totalSaleslimit||alwayscraftbooster[extractedNumber[i]]){
-                                            if(document.getElementById(buttonId2)!=null){
-                                                console.log(extractedNumber[i]+'appé˜Ÿåˆ—çŠ¶æ€ï¼Œæ—¥ç›ˆåˆ©å¤§äºç­‰äº'+profitlimit+'ï¼Œæœˆé”€é‡å¤§äºç­‰äº'+totalSaleslimit+'ï¼Œæ— éœ€å˜åŒ–ï¼Œæœˆé”€é‡'+totalSales);
-                                            }else if(document.getElementById(buttonId3)!=null){
-                                                console.log(extractedNumber[i]+'appæ”¶è—çŠ¶æ€ï¼Œæ—¥ç›ˆåˆ©å¤§äºç­‰äº'+profitlimit+'ï¼Œæœˆé”€é‡å¤§äºç­‰äº'+totalSaleslimit+'ï¼Œå˜ä¸ºé˜Ÿåˆ—çŠ¶æ€ï¼Œæœˆé”€é‡'+totalSales);
+                                        console.log(extractedNumber[i] + 'ÔÂÏúÁ¿Îª' + totalSales);
+                                        //¢Ù+outToBoosterÈ«²¿ÒÆµ½¶ÓÁĞ
+                                        //¢Ú+boosterToOut¶ÓÁĞÒÆµ½È«²¿
+                                        //¢Û+collectToOutÊÕ²ØÒÆµ½È«²¿
+                                        //¢Ü+outToCollectÈ«²¿ÒÆµ½ÊÕ²Ø
+                                        //¢İ+outToBlackÈ«²¿ÒÆµ½À­ºÚ
+                                        //¢Ş+blackToOutÀ­ºÚÒÆµ½È«²¿
+                                        //¢ß+collectToBoosterÊÕ²ØÒÆµ½¶ÓÁĞ
+                                        //¢à+boosterToCollect¶ÓÁĞÒÆµ½ÊÕ²Ø
+                                        if (alwaysCraftBoosterPacks[extractedNumber[i]] || ((totalSales >= 30 && totalSales < 60 && profit >= 0.8) || (totalSales >= 60 && totalSales < 100 && profit >= 0.4) || (totalSales >= 100 && totalSales < 400 && profit >= 0.2) || (totalSales >= 400 && profit >= 0.1))) {
+                                            if (document.getElementById(buttonId2) != null) {
+                                                console.log(extractedNumber[i] + 'app¶ÓÁĞ×´Ì¬£¬ÈÕÓ¯Àû´óÓÚµÈÓÚ0.1£¬ÔÂÏúÁ¿Âú×ãÒªÇó£¬ÎŞĞè±ä»¯£¬ÔÂÏúÁ¿' + totalSales);
+                                            } else if (document.getElementById(buttonId3) != null) {
+                                                console.log(extractedNumber[i] + 'appÊÕ²Ø×´Ì¬£¬ÈÕÓ¯Àû´óÓÚµÈÓÚ0.1£¬ÔÂÏúÁ¿Âú×ãÒªÇó£¬±äÎª¶ÓÁĞ×´Ì¬£¬ÔÂÏúÁ¿' + totalSales);
                                                 let button = document.getElementById(buttonId7);
                                                 button.click();
-                                            }else if(document.getElementById(buttonId5)!=null){
-                                                console.log(extractedNumber[i]+'appå…¨éƒ¨çŠ¶æ€ï¼Œæ—¥ç›ˆåˆ©å¤§äºç­‰äº'+profitlimit+'ï¼Œæœˆé”€é‡å¤§äºç­‰äº'+totalSaleslimit+'ï¼Œå˜ä¸ºé˜Ÿåˆ—çŠ¶æ€ï¼Œæœˆé”€é‡'+totalSales);
+                                            } else if (document.getElementById(buttonId5) != null) {
+                                                console.log(extractedNumber[i] + 'appÈ«²¿×´Ì¬£¬ÈÕÓ¯Àû´óÓÚµÈÓÚ0.1£¬ÔÂÏúÁ¿Âú×ãÒªÇó£¬±äÎª¶ÓÁĞ×´Ì¬£¬ÔÂÏúÁ¿' + totalSales);
                                                 let button = document.getElementById(buttonId1);
                                                 button.click();
-                                            }
-                                            /*                                             else if(document.getElementById(buttonId6)!=null){
-                                                console.log(extractedNumber[i]+'appæ‹‰é»‘çŠ¶æ€ï¼Œæ—¥ç›ˆåˆ©å¤§äºç­‰äº'+profitlimit+'ï¼Œæœˆé”€é‡å¤§äºç­‰äº'+totalSaleslimit+'ï¼Œå…ˆå˜ä¸ºå…¨éƒ¨çŠ¶æ€ï¼Œå»¶è¿Ÿ500mså†é˜Ÿåˆ—ï¼Œæœˆé”€é‡'+totalSales);
+                                            } else if (document.getElementById(buttonId6) != null) {
+                                                console.log(extractedNumber[i] + 'appÀ­ºÚ×´Ì¬£¬ÈÕÓ¯Àû´óÓÚµÈÓÚ0.1£¬ÔÂÏúÁ¿Âú×ãÒªÇó£¬ÏÈ±äÎªÈ«²¿×´Ì¬£¬ÑÓ³Ù500msÔÙ±äÎª¶ÓÁĞ×´Ì¬£¬ÔÂÏúÁ¿' + totalSales);
                                                 let button = document.getElementById(buttonId6);
                                                 button.click();
-                                                setTimeout(function() {
+                                                setTimeout(function () {
                                                     let button = document.getElementById(buttonId1);
                                                     button.click();
                                                 }, 500);
-                                            } */
-                                            totalprofit+= profit;
-                                            totalgem+=boosterCostTemplate[cardCount].gemsCount;
-                                            totalgame++;
-                                            SelectGameToCraftBoosterPacks+=extractedNumber[i]+',';
-                                            displayElement4.textContent='æ—¥æ€»ç›ˆåˆ©ä¸º'+totalprofit.toFixed(2)+',é˜Ÿåˆ—æ¸¸æˆæ€»æ•°'+totalgame+',åˆå¡åŒ…æ‰€éœ€å®çŸ³'+totalgem;
-                                        }else if(totalSales<totalSaleslimit){
-                                            //â‘ +outToBoosterå…¨éƒ¨ç§»åˆ°é˜Ÿåˆ—
-                                            //â‘¡+boosterToOuté˜Ÿåˆ—ç§»åˆ°å…¨éƒ¨
-                                            //â‘¢+collectToOutæ”¶è—ç§»åˆ°å…¨éƒ¨
-                                            //â‘£+outToCollectå…¨éƒ¨ç§»åˆ°æ”¶è—
-                                            //â‘¤+outToBlackå…¨éƒ¨ç§»åˆ°æ‹‰é»‘
-                                            //â‘¥+blackToOutæ‹‰é»‘ç§»åˆ°å…¨éƒ¨
-                                            //â‘¦+collectToBoosteræ”¶è—ç§»åˆ°é˜Ÿåˆ—
-                                            //â‘§+boosterToCollecté˜Ÿåˆ—ç§»åˆ°æ”¶è—
-                                            if(document.getElementById(buttonId5)!=null){
-                                                console.log(extractedNumber[i]+'appå…¨éƒ¨çŠ¶æ€ï¼Œæœˆé”€é‡å°äº'+totalSaleslimit+'ï¼Œå˜ä¸ºæ‹‰é»‘ï¼Œæœˆé”€é‡'+totalSales);
-                                                let button = document.getElementById(buttonId5);
+                                            }
+                                            if (!checkedgame[extractedNumber[i]] && typeof extractedNumber[i] !== 'undefined') {
+                                                totalprofit += profit;
+                                                totalgem += boosterCostTemplate[cardCount].gemsCount;
+                                                totalgame++;
+                                                SelectGameToCraftBoosterPacks += extractedNumber[i] + ',';
+                                                let mes = extractedNumber[i] + ',ÈÕÓ¯ÀûÎª' + profit.toFixed(2) + ',¶ÓÁĞÓÎÏ·×ÜÊı' + totalgame + ',ºÏ¿¨°üËùĞè±¦Ê¯' + boosterCostTemplate[cardCount].gemsCount + ',ÔÂÏúÁ¿Îª' + totalSales;
+                                                allmes.push(mes);
+                                                checkedgame[extractedNumber[i]] = true;
+                                            }
+                                            // console.log('ÈÕ×ÜÓ¯ÀûÎª'+totalprofit.toFixed(2)+',¶ÓÁĞÓÎÏ·×ÜÊı'+totalgame+',ºÏ¿¨°üËùĞè±¦Ê¯'+totalgem);
+                                            displayElement4.textContent = 'ÈÕ×ÜÓ¯ÀûÎª' + totalprofit.toFixed(2) + ',¶ÓÁĞÓÎÏ·×ÜÊı' + totalgame + ',ºÏ¿¨°üËùĞè±¦Ê¯' + totalgem;
+                                        } else {
+                                            if (document.getElementById(buttonId2) != null) {
+                                                console.log(extractedNumber[i] + 'app¶ÓÁĞ×´Ì¬£¬²»Âú×ã¶ÓÁĞºÍÀ­ºÚÌõ¼ş£¬ÈÕÓ¯Àû:' + profit + '£¬ÔÂÏúÁ¿:' + totalSales + '£¬±äÎªÊÕ²Ø×´Ì¬');
+                                                let button = document.getElementById(buttonId8);
                                                 button.click();
-                                            }else if(document.getElementById(buttonId3)!=null){
-                                                console.log(extractedNumber[i]+'appæ”¶è—çŠ¶æ€ï¼Œæœˆé”€é‡å°äº'+totalSaleslimit+'ï¼Œå…ˆå˜ä¸ºå…¨éƒ¨çŠ¶æ€ï¼Œå»¶è¿Ÿ500mså†å˜ä¸ºæ‹‰é»‘çŠ¶æ€ï¼Œæœˆé”€é‡'+totalSales);
-                                                let button = document.getElementById(buttonId3);
+                                            } else if (document.getElementById(buttonId3) != null) {
+                                                console.log(extractedNumber[i] + 'appÊÕ²Ø×´Ì¬£¬²»Âú×ã¶ÓÁĞºÍÀ­ºÚÌõ¼ş£¬ÈÕÓ¯Àû:' + profit + '£¬ÔÂÏúÁ¿:' + totalSales + '£¬ÎŞĞè±ä»¯');
+                                            } else if (document.getElementById(buttonId5) != null) {
+                                                console.log(extractedNumber[i] + 'appÈ«²¿×´Ì¬£¬²»Âú×ã¶ÓÁĞºÍÀ­ºÚÌõ¼ş£¬ÈÕÓ¯Àû:' + profit + '£¬ÔÂÏúÁ¿:' + totalSales + '£¬±äÎªÊÕ²Ø×´Ì¬');
+                                                let button = document.getElementById(buttonId4);
                                                 button.click();
-                                                setTimeout(function() {
-                                                    let button = document.getElementById(buttonId5);
-                                                    button.click();
-                                                }, 500);
-                                            }else if(document.getElementById(buttonId2)!=null){
-                                                console.log(extractedNumber[i]+'appé˜Ÿåˆ—çŠ¶æ€ï¼Œæœˆé”€é‡å°äº'+totalSaleslimit+'ï¼Œå…ˆå˜ä¸ºå…¨éƒ¨çŠ¶æ€ï¼Œå»¶è¿Ÿ500mså†å˜ä¸ºæ‹‰é»‘çŠ¶æ€ï¼Œæœˆé”€é‡'+totalSales);
-                                                let button = document.getElementById(buttonId2);
-                                                button.click();
-                                                setTimeout(function() {
-                                                    let button = document.getElementById(buttonId5);
-                                                    button.click();
-                                                }, 500);
-                                            }else if(document.getElementById(buttonId6)!=null){
-                                                console.log(extractedNumber[i]+'appæ‹‰é»‘çŠ¶æ€ï¼Œæœˆé”€é‡å°äº'+totalSaleslimit+'ï¼Œæ— éœ€å˜åŒ–ï¼Œæœˆé”€é‡'+totalSales);
+                                            } else if (document.getElementById(buttonId6) != null) {
+                                                console.log(extractedNumber[i] + 'appÀ­ºÚ×´Ì¬£¬²»Âú×ã¶ÓÁĞºÍÀ­ºÚÌõ¼ş£¬ÈÕÓ¯Àû:' + profit + '£¬ÔÂÏúÁ¿:' + totalSales + '£¬ÎŞĞè±ä»¯');
                                             }
                                         }
                                         i++;
@@ -485,6 +555,7 @@
                 },
             });
         }
+
         processArrayWithDelay(extractedNumber, 0);
     });
-})();
+})(jQuery);
