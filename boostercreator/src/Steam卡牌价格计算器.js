@@ -262,10 +262,10 @@
                     let priceText = priceElement.textContent;
                     // 将价格文本转换为浮点数
                     let price = parseFloat(priceText.replace(/[^\d.]/g, ""));
-                    console.log('卡牌税前价格：'+price)
-                    console.log('卡牌税后价格：'+getPriceBeforeFees(price))
+                    /*                    console.log('卡牌税前价格：'+price)
+                                        console.log('卡牌税后价格：'+getPriceBeforeFees(price))*/
                     // 累加总价
-                    totalPrice +=  getPriceBeforeFees(price);
+                    totalPrice += getPriceBeforeFees(price);
                 });
                 // 计算税后卡包价格
                 const finalPrice=totalPrice / cardCount*3;
@@ -316,48 +316,24 @@
                             displayElement4.style.color = 'green';//盈利标绿
                         }
                         //获取游戏价格，计算回本时间
-                        let shopurl = `https://store.steampowered.com/app/749520`.replace('749520', extractedNumber);
+                        let shopurl = `https://store.steampowered.com/api/appdetails?appids=433360`.replace('433360', extractedNumber);
                         GM_xmlhttpRequest({
                             method: "GET",
                             url: shopurl,
                             onload: function(response) {
-                                let parser = new DOMParser();
-                                let doc = parser.parseFromString(response.responseText, "text/html");
-                                let priceElements=doc.querySelectorAll(".game_area_purchase_game .game_purchase_price.price");
-                                let priceElement;
-                                //除去买入框有字母成分以及买入框含有体验的游戏
-                                for (let i = 0; i < elements.length; i++) {
-                                    if (priceElements[i]!=null&&(priceElements[i].textContent.includes('Free')||(!/[a-z]/.test(priceElements[i].textContent)&&!priceElements[i].textContent.includes('体验')))){
-                                        priceElement = priceElements[i];
-                                        break;
-                                    }
-                                }
-                                //免费游戏
-                                if (priceElement == null) {
-                                    priceElement = doc.querySelector(".game_area_purchase_game #freeGameBtn");
-                                    if(priceElement != null)priceElement.textContent=0;
-                                }
-                                if (priceElement!=null&&(priceElement.textContent.includes("免费")||priceElement.textContent.includes("Free"))) {
-                                    priceElement.textContent=0;
-                                }
-                                //折扣游戏
-                                if (priceElement == null) {
-                                    priceElement = doc.querySelector(".game_area_purchase_game .discount_final_price");
-                                }
-                                //只有一个.game_area_purchase_game .game_purchase_price.price元素而且被上面排除了的游戏
-                                if(priceElement==null&&priceElements.length!=0){
-                                    priceElement = priceElements[0];
-                                    priceElement.textContent=0;
-                                }
-                                //无法查询商店页面价格的游戏
-                                if(priceElement == null){
-                                    displayElement8.textContent ='无法查询商店页面价格';
+                                let data = JSON.parse(response.response);
+                                console.log(data[extractedNumber])
+                                if(data[extractedNumber].success==false){
+                                    console.log(extractedNumber+'为锁区游戏')
                                     return;
                                 }
-                                let priceText = priceElement.textContent;
-                                let priceNumber= parseFloat(priceText.replace(/[^\d.]/g, ""));
-                                let day=Math.floor(priceNumber/profit);
-                                displayElement8.textContent ='游戏价格：' + priceNumber+'，回本天数：' + day;
+                                let gameData = data[extractedNumber].data;
+                                let price=0;
+                                if (gameData.is_free==false){
+                                    price=gameData.price_overview.final/100;
+                                }
+                                let day=Math.floor(price/profit);
+                                displayElement8.textContent ='游戏价格：' + price+'，回本天数：' + day;
                             }
                         });
                     },
