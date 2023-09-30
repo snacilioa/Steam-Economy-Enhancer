@@ -451,7 +451,7 @@
 
     // Removes an item.
     // Item is the unique item id.
-    SteamMarket.prototype.removeListing = function(item, callback /*err, data*/ ) {
+    SteamMarket.prototype.removeListing = function (item, callback /*err, data*/) {
         var sessionId = readCookie('sessionid');
         $.ajax({
             type: "POST",
@@ -459,11 +459,30 @@
             data: {
                 sessionid: sessionId
             },
-            success: function(data) {
+            success: function (data) {
                 callback(ERROR_SUCCESS, data);
             },
-            error: function() {
-                return callback(ERROR_FAILED);
+            error: function () {
+                // return callback(ERROR_FAILED);
+                $.ajax({
+                    type: "POST",
+                    url: window.location.protocol + '//steamcommunity.com/market/cancelbuyorder/',
+                    data: {
+                        sessionid: sessionId,
+                        buy_orderid: item
+                    },
+                    success: function (data) {
+                        callback(ERROR_SUCCESS, data);
+                    },
+                    error: function () {
+                        return callback(ERROR_FAILED);
+                    },
+                    crossDomain: true,
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    dataType: 'json'
+                });
             },
             crossDomain: true,
             xhrFields: {
