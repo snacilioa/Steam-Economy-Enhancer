@@ -40,11 +40,12 @@
         "1186460-Berserker (Profile Background)": "1186460-Berserker",
         "1186460-Heroine (Profile Background)": "1186460-Heroine",
         "1345740-mengyetong (Trading Card)": "1345740-mengyetong",
-        "340220-LMG Soldier #2 (Foil)": "340220-LMG%20Soldier%20%232%20(Foil)",
+        "1345740-mengyetong (Foil Trading Card)": "1345740-mengyetong (Foil)",
     }
 
     var ChangeSameHashNameCard = {
         "1478160-Irin (Trading Card)": true,
+        "1478160-Irin (Foil Trading Card)": true,
     }
 
     var DateTime = luxon.DateTime;
@@ -528,33 +529,59 @@
         }
     };
 
-    SteamMarket.prototype.getGooValue = function(item, callback) {
+    SteamMarket.prototype.getGooValue = function (item, callback) {
         try {
-            var sessionId = readCookie('sessionid');
-            $.ajax({
-                type: "GET",
-                url: this.inventoryUrlBase + 'ajaxgetgoovalue/',
-                data: {
-                    sessionid: sessionId,
-                    appid: item.market_fee_app,
-                    assetid: item.assetid,
-                    contextid: item.contextid
-                },
-                success: function(data) {
-                    callback(ERROR_SUCCESS, data);
-                },
-                error: function(data) {
-                    return callback(ERROR_FAILED, data);
-                },
-                crossDomain: true,
-                xhrFields: {
-                    withCredentials: true
-                },
-                dataType: 'json'
-            });
+            for (var i = 0; i < item.owner_actions.length; i++) {
+                var action = item.owner_actions[i];
+                if (!action.link || !action.name) {
+                    continue;
+                }
+                if (action.link.match(/^javascript:GetGooValue/)) {
+                    var item_data = action.link.split(',');
+                    var appid = item_data[2].trim();
+                    var item_type = item_data[3].trim();
+                    var border_color = item_data[4].trim();
+                    $.ajax({
+                        type: "GET",
+                        url: window.location.protocol + '//steamcommunity.com/auction/ajaxgetgoovalueforitemtype/',
+                        data: {
+                            appid: appid,
+                            item_type: item_type,
+                            border_color: border_color
+                        },
+                        success: function (data) {
+                            callback(ERROR_SUCCESS, data);
+                        },
+                        error: function (data) {
+                            return callback(ERROR_FAILED, data);
+                        },
+                        crossDomain: true,
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        dataType: 'json'
+                    });
+                }
+            }
         } catch (e) {
             return callback(ERROR_FAILED);
         }
+        /*try {
+            var sessionId = readCookie('sessionid');
+            $.ajax({
+                type: "GET", url: this.inventoryUrlBase + 'ajaxgetgoovalue/', data: {
+                    sessionid: sessionId, appid: item.market_fee_app, assetid: item.assetid, contextid: item.contextid
+                }, success: function (data) {
+                    callback(ERROR_SUCCESS, data);
+                }, error: function (data) {
+                    return callback(ERROR_FAILED, data);
+                }, crossDomain: true, xhrFields: {
+                    withCredentials: true
+                }, dataType: 'json'
+            });
+        } catch (e) {
+            return callback(ERROR_FAILED);
+        }*/
         //http://steamcommunity.com/auction/ajaxgetgoovalueforitemtype/?appid=582980&item_type=18&border_color=0
         // OR
         //http://steamcommunity.com/my/ajaxgetgoovalue/?sessionid=xyz&appid=535690&assetid=4830605461&contextid=6
@@ -712,7 +739,7 @@
         var url = window.location.protocol + '//steamcommunity.com/market/listings/' + appid + '/' + market_name;
         $.get(url,
                 function(page) {
-                    var matches = /Market_LoadOrderSpread\( (.+) \);/.exec(page);
+                    var matches = /Market_LoadOrderSpread\( (\d+) \);/.exec(page);
                     if (matches == null) {
                         callback(ERROR_DATA);
                         return;
@@ -1743,9 +1770,7 @@
                 function(err, history, cachedHistory) {
                     if (err) {
                         logConsole('Failed to get price history for ' + itemName);
-
-                        if (err == ERROR_FAILED)
-                            failed += 1;
+                            if (err == ERROR_FAILED)failed += 1;
                     }
 
                     market.getItemOrdersHistogram(item,
