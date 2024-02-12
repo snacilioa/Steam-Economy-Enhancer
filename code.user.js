@@ -307,7 +307,6 @@
             return 0;
 //Todo
         const str = histogram.sell_order_table.toString();
-        const priceString = histogram.sell_order_table.toString();
         const regex = /¥\s(\d+\.\d+)/g;
         var sell_price_list_IncludeingFees = [];
         let match = regex.exec(str);
@@ -318,17 +317,16 @@
         if (sell_price_list_IncludeingFees.length >= 2){
             var lowest2ndprice = Number(sell_price_list_IncludeingFees[1]);
         }
-
         var listingPrice = market.getPriceBeforeFees(histogram.lowest_sell_order);
+        var buyPrice =  market.getPriceBeforeFees(histogram.highest_buy_order);
 
         /**
-         * 当最低价格低于第二价格的60%时，以第二价格出售
+         * 当最低价格低于第二价格的60%时，以第二价格出售,接近求购价一定时以第二价格出售
          */
             var listingPrice2ndLowest1 = market.getPriceBeforeFees(lowest2ndprice * 100);
-            if(listingPrice  < listingPrice2ndLowest1 * 0.6){
+            if((listingPrice * 0.9 < buyPrice || listingPrice  < listingPrice2ndLowest1 * 0.6 ) && listingPrice > 500){
                 listingPrice = listingPrice2ndLowest1;
             }
-
         var shouldIgnoreLowestListingOnLowQuantity = getSettingWithDefault(SETTING_PRICE_IGNORE_LOWEST_Q) == 1;
 
         if (shouldIgnoreLowestListingOnLowQuantity && histogram.sell_order_graph.length >= 2) {
