@@ -97,6 +97,9 @@
             15: {
                 gemsCount: 400
             },
+            19: {
+                gemsCount: 400
+            },
         }
 
         let container = document.createElement('div');

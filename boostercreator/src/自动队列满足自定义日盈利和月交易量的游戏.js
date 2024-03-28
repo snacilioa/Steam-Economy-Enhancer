@@ -18,7 +18,8 @@
     //第一次使用，需要f12打开控制台，复制ignore对象导入你有的游戏，后续买入新游戏，手动一个个添加理想闪卡价格
     let SelectGameToCraftBoosterPacks = '';
     let alwaysCraftBoosterPacks = {
-        1901370: true,
+
+
     }
     let idealprice = {
         //主号没有的游戏
@@ -30,6 +31,7 @@
         "399090": 99,
         "1179080": 120,
         "1567440": 130,
+        "1469910":300,
         "347730": 99,
         "889700": 400,
         "359050": 50,
@@ -39,6 +41,7 @@
         "591420": 99,
         "562220": 99,
         "508900": 99,
+        "1238840":10,
         "232770": 400,
         "814540": 550,
         "707300": 450,
@@ -72,7 +75,8 @@
         "790060": 320,
         "610080": 110,
         "359600": 500,
-        "1966070": 500,
+        "658560":10,
+        "1966070": 1400,
         "414660": 180,
         "2262610": 250,
         "1468260": 440,
@@ -84,7 +88,7 @@
         "367140": 240,
         "619390": 1000,
         "399120": 1000,
-        "654260": 900,
+        "654260": 650,
         "1238730": 738,
         "981770": 150,
         "312370": 200,
@@ -166,7 +170,7 @@
         "867490": 1100,
         "1148760": 440,
         "349140": 148,
-        "658620": 1000,
+        "658620": 500,
         "1379870": 660,
         "415420": 103,
         "270010": 13,
@@ -282,7 +286,7 @@
         "460160": 400,
         "472870": 242,
         "476240": 2,
-        "487430": 124,
+        "487430": 220,
         "489520": 19,
         "489630": 15,
         "496260": 460,
@@ -294,7 +298,7 @@
         "531730": 611,
         "544730": 159,
         "545690": 9,
-        "548840": 1100,
+        "548840": 500,
         "552280": 134,
         "554310": 77,
         "554690": 377,
@@ -374,7 +378,7 @@
         "1226530": 567,
         "1230140": 125,
         "1250760": 101,
-        "1257410": 1000,
+        "1257410": 600,
         "1277930": 313,
         "1277940": 410,
         "1307690": 600,
@@ -389,7 +393,7 @@
         "1518770": 390,
         "1558510": 430,
         "1567800": 320,
-        "1575450": 600,
+        "1575450": 10,
         "1584090": 63,
         "1605010": 115,
         "1691970": 470,
@@ -414,6 +418,25 @@
         "2206340": 387,
         "2209680": 400,
         "2321180": 400,
+        "2313250":150,
+        "337420":200,
+        "2009010":1000,
+        "2280520":500,
+        "1949000":500,
+        "1630650":150,
+        "2781370":0,
+        "1919040":0,
+        "2667970":50,
+        "2313240":50,
+        "2356500":50,
+        "2551170":50,
+        "2567190":300,
+        "487430":200,
+        "481510":350,
+        "602930":100,
+        "2543050":100,
+
+
     };
     //永久拉黑名单
     let blacklist = {
@@ -437,6 +460,13 @@
         "644560": true,
         "646570": true,
         "712840": true,
+        "1575450":true,
+        "997070":true,
+        "1469910":true,
+        "381640":true,
+        "552970":true,
+
+
     }
     const boosterCostTemplate = {
         5: {
@@ -470,6 +500,9 @@
             gemsCount: 429
         },
         15: {
+            gemsCount: 400
+        },
+        19: {
             gemsCount: 400
         },
     }
@@ -613,7 +646,7 @@
         console.log('modenormal:', modenormal);
     });
     let delaytime = 1000, allmes = [];
-    let checkedgame = {};
+    let checkedgame = {},checkTimes = {},errorGame = [];
     // 添加按钮点击事件
     button.addEventListener("click", function () {
         // 初始化ignore对象
@@ -673,12 +706,27 @@
             if (i >= extractedNumber.length) {
                 console.log('查询结束,队列结果如下');
                 console.log(allmes);
-                console.log('bstopall Bot2')
-                console.log('bstatus Bot2')
-                console.log('\'booster Bot2 ' + SelectGameToCraftBoosterPacks + '\'');
+                console.log('bstopall bot1')
+                console.log('bstatus bot1')
+                console.log('\'booster bot1 ' + SelectGameToCraftBoosterPacks + '\'');
                 console.log(SelectGameToCraftBoosterPacks);
+                console.log(errorGame);
                 return;
             }
+
+            if (checkTimes[extractedNumber[i]] == undefined) {
+                checkTimes[extractedNumber[i]] = 0;
+            }
+            checkTimes[extractedNumber[i]]++;
+            console.log('第' + i + '次查询的游戏' + extractedNumber[i] + '查询次数为'+checkTimes[extractedNumber[i]])
+            if (checkTimes[extractedNumber[i]]>30) {
+                console.log('第' + i + '次查询的游戏' + extractedNumber[i] + '查询次数超过30次，查询下一个游戏')
+                errorGame.push(extractedNumber[i] + '游戏查询异常')
+                i++;
+                setTimeout(processArrayWithDelay, delaytime);
+                return;
+            }
+
             //查询一个卡包价格及利润
             let newURL = 'https://steamcommunity.com/market/search/render/?start=0&count=100&category_753_cardborder[]=tag_cardborder_0&appid=753&category_753_Game[]=tag_app_749520'.replace('749520', extractedNumber[i]);
             GM_xmlhttpRequest({
@@ -770,14 +818,15 @@
                                 // 将价格文本转换为浮点数
                                 let price = parseFloat(priceText.replace(/[^\d.]/g, ""));
                                 if (price == 0) {
-                                    withoutcardcount++;
+                                    price = 30;
+                                    //withoutcardcount++;
                                 }
                                 // 累加总价
                                 totalPrice += price;
                             });
-                            let hascardcount = elements.length - withoutcardcount;
-                            let toaddprice = totalPrice / hascardcount * 2 * withoutcardcount;
-                            totalPrice += toaddprice;
+                            //let hascardcount = elements.length - withoutcardcount;
+                            //let toaddprice = totalPrice / hascardcount * 2 * withoutcardcount;
+                            //totalPrice += toaddprice;
                             if (totalPrice == 0) {
                                 console.log(extractedNumber[i] + '查询到闪亮卡牌价格为0，重新查询该游戏');
                                 setTimeout(processArrayWithDelay, delaytime);
@@ -893,7 +942,7 @@
                                         //⑥+blackToOut拉黑移到全部
                                         //⑦+collectToBooster收藏移到队列
                                         //⑧+boosterToCollect队列移到收藏
-                                        if (alwaysCraftBoosterPacks[extractedNumber[i]] || ((totalSales >= 30 && totalSales < 60 && profit >= 0.8) || (totalSales >= 60 && totalSales < 100 && profit >= 0.4) || (totalSales >= 100 && totalSales < 400 && profit >= 0.2) || (totalSales >= 400 && profit >= 0.1))) {
+                                        if (alwaysCraftBoosterPacks[extractedNumber[i]] || ((totalSales >= 40 && totalSales < 60 && profit >= 1) || (totalSales >= 60 && totalSales < 80 && profit >= 0.5) || (totalSales >= 80 && totalSales < 100 && profit >= 0.4)  || (totalSales >= 100 && totalSales < 120 && profit >= 0.3) || (totalSales >= 120 && totalSales < 600 && profit >= 0.2) || (totalSales >= 600 && profit >= 0.1))) {
                                             if (document.getElementById(buttonId2) != null) {
                                                 console.log(extractedNumber[i] + 'app队列状态，日盈利大于等于0.1，月销量满足要求，无需变化，月销量' + totalSales);
                                             } else if (document.getElementById(buttonId3) != null) {

@@ -323,10 +323,10 @@
         /**
          * 当最低价格低于第二价格的60%时，以第二价格出售,接近求购价一定时以第二价格出售
          */
-            var listingPrice2ndLowest1 = market.getPriceBeforeFees(lowest2ndprice * 100);
-            if((listingPrice * 0.9 < buyPrice || listingPrice  < listingPrice2ndLowest1 * 0.6 ) && listingPrice > 500){
-                listingPrice = listingPrice2ndLowest1;
-            }
+        var listingPrice2ndLowest1 = market.getPriceBeforeFees(lowest2ndprice * 100);
+        if((listingPrice * 0.9 < buyPrice || listingPrice  < listingPrice2ndLowest1 * 0.6 ) && listingPrice > 500){
+            listingPrice = listingPrice2ndLowest1;
+        }
         var shouldIgnoreLowestListingOnLowQuantity = getSettingWithDefault(SETTING_PRICE_IGNORE_LOWEST_Q) == 1;
 
         if (shouldIgnoreLowestListingOnLowQuantity && histogram.sell_order_graph.length >= 2) {
@@ -386,7 +386,7 @@
         var calculatedPrice = 0;
         if (shouldUseBuyOrder && buyPrice !== -2) {
             calculatedPrice = buyPrice;
-        } else if (historyPrice < listingPrice || !shouldUseAverage || listingPrice >1000) {
+        } else if (historyPrice < listingPrice || !shouldUseAverage || listingPrice >99) {
             calculatedPrice = listingPrice;
         } else {
             calculatedPrice = historyPrice;
@@ -2133,9 +2133,9 @@
                     // Generate quick sell buttons.
                     var prices = [];
 
-                   /* if (histogram != null && histogram.highest_buy_order != null) {
-                        prices.push(parseInt(histogram.highest_buy_order));
-                    }*/
+                    /* if (histogram != null && histogram.highest_buy_order != null) {
+                         prices.push(parseInt(histogram.highest_buy_order));
+                     }*/
 
                     if (histogram != null && histogram.lowest_sell_order != null) {
                         // Transaction volume must be separable into three or more parts (no matter if equal): valve+publisher+seller.
