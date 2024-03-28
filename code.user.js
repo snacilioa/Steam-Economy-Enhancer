@@ -328,7 +328,6 @@
             listingPrice = listingPrice2ndLowest1;
         }
         var shouldIgnoreLowestListingOnLowQuantity = getSettingWithDefault(SETTING_PRICE_IGNORE_LOWEST_Q) == 1;
-
         if (shouldIgnoreLowestListingOnLowQuantity && histogram.sell_order_graph.length >= 2) {
             var listingPrice2ndLowest = market.getPriceBeforeFees(histogram.sell_order_graph[1][0] * 100);
 
@@ -386,11 +385,14 @@
         var calculatedPrice = 0;
         if (shouldUseBuyOrder && buyPrice !== -2) {
             calculatedPrice = buyPrice;
-        } else if (historyPrice < listingPrice || !shouldUseAverage || listingPrice >99) {
+        } else if (historyPrice < listingPrice || !shouldUseAverage) {
             calculatedPrice = listingPrice;
-        } else {
+        } else if(listingPrice > 99){
+            calculatedPrice = listingPrice;
+        } else{
             calculatedPrice = historyPrice;
         }
+
 
         var changedToMax = false;
         // List for the maximum price if there are no listings yet.
@@ -2649,6 +2651,7 @@
                                 priceInfo.minPriceBeforeFees,
                                 priceInfo.maxPriceBeforeFees);
                             var lowest_sell_price = histogram.lowest_sell_order;
+
                             var sellPriceWithOffset = calculateSellPriceBeforeFees(history,
                                 histogram,
                                 true,
@@ -2672,9 +2675,8 @@
                                 logConsole('在售价低于上架价格的60%.');
                                 $('.market_listing_my_price', listingUI).last().css('background', COLOR_PRICE_Exceeding_Standard);
                                 listingUI.addClass('exceeding');
-                            }else if (lowest_sell_price < price) { //sellPriceWithoutOffsetWithFees 改为 lowest_sell_price
+                            }else if (lowest_sell_price < price ) { //sellPriceWithoutOffsetWithFees 改为 lowest_sell_price
                                 logConsole('Sell price is too high.');
-
                                 $('.market_listing_my_price', listingUI).last()
                                     .css('background', COLOR_PRICE_EXPENSIVE);
                                 listingUI.addClass('overpriced');
@@ -2693,6 +2695,7 @@
                                 $('.market_listing_my_price', listingUI).last().css('background', COLOR_PRICE_FAIR);
                                 listingUI.addClass('fair');
                             }
+
 
                             return callback(true, cachedHistory && cachedListings);
                         });
